@@ -1,82 +1,134 @@
 # Fintech Lakehouse Platform
 
-End-to-end local data engineering project simulating fintech payment pipelines using lakehouse architecture.
+End-to-end local data engineering project simulating fintech payment pipelines using a lakehouse architecture.
 
-## Project Goal
+---
 
-Build a modern local data platform to learn and practice:
+## 📌 Overview
 
-* Docker
-* PostgreSQL
-* MinIO
-* Python data generation
-* EL / ELT pipelines
-* Bronze / Silver / Gold architecture
-* Future: Kafka, Spark, dbt, Airflow
+This project implements a full data pipeline:
 
-## Architecture (V1)
+PostgreSQL → Bronze (MinIO) → Silver (Clean Layer)
+
+---
+
+## ⚙️ Architecture
 
 ```text
-Python Payment Generator
+Python Generator
         ↓
-PostgreSQL (source system)
+PostgreSQL (OLTP source)
         ↓
-Export Raw Events
+Exporter (Incremental Load)
         ↓
-MinIO (Bronze Layer)
+MinIO (Bronze Layer - Raw Data)
+        ↓
+Transform (Cleaning)
+        ↓
+MinIO (Silver Layer - Clean Data)
 ```
 
-## Source Tables
+---
 
-### payments
+## 🚀 Features
 
-Stores current payment state.
+### Data Ingestion
 
-### payment_events
+* Incremental loading (no full reloads)
+* Watermark tracking via `state.json`
+* Idempotent pipeline behavior
 
-Stores historical lifecycle events for each payment.
+### Data Storage
 
-## Event Types
+* MinIO (S3-compatible storage)
+* Partitioned data by date
+* Parquet format (columnar, compressed)
 
-* payment_initiated
-* payment_authorized
-* payment_completed
-* payment_failed
-* payment_refunded
-* payment_chargeback
-* payment_cancelled
+### Data Transformation
 
-## Tech Stack
+* Deduplication
+* Data validation (e.g. amount > 0)
+* Standardization (currency, status)
+
+---
+
+## 🗂️ Data Layout
+
+### Bronze (Raw)
+
+```
+bronze/payments/YYYY-MM-DD/*.parquet
+```
+
+### Silver (Clean)
+
+```
+silver/payments/YYYY-MM-DD/*.parquet
+```
+
+---
+
+## 🧱 Tech Stack
 
 * Python
 * Docker
 * PostgreSQL
-* MinIO
+* MinIO (S3)
 
-## Roadmap
+---
 
-### V1
+## ▶️ How to Run
 
-* Local source system
-* Payment generator
-* Export raw data to MinIO
+### 1. Start services
 
-### V2
+```
+docker compose up -d
+```
 
-* Kafka streaming ingestion
+### 2. Generate data
 
-### V3
+```
+python generator/generator.py
+```
 
-* Spark transformations
+### 3. Run ingestion (Bronze)
 
-### V4
+```
+python exporter/exporter.py
+```
 
-* dbt models
+### 4. Run transformation (Silver)
 
-### V5
+```
+python silver/transform.py
+```
 
-* Airflow orchestration
+---
 
-## Status
+## 🧠 Concepts Covered
 
-Planning / Initial Setup
+* Data Lake vs OLTP
+* Incremental vs Full Load
+* Watermarks & State Management
+* Partitioning
+* Parquet format
+* Bronze / Silver architecture
+
+---
+
+## 📈 Status
+
+V1 (Bronze + Incremental + Parquet + Partitioning) ✅
+V2 (Silver Layer - Data Cleaning) 🚧
+
+---
+
+## 🛣️ Roadmap
+
+* Kafka (streaming ingestion)
+* Spark (distributed processing)
+* dbt (transformations)
+* Airflow (orchestration)
+* Gold layer (analytics)
+
+---
