@@ -30,6 +30,12 @@ MinIO (Silver Layer - Clean Data)
 
 ---
 
+## 📸 MinIO Data Lake
+
+![MinIO](docs/minio.png)
+
+---
+
 ## 🚀 Features
 
 ### Data Ingestion
@@ -116,10 +122,10 @@ python silver/transform.py
 
 ---
 
-## 📈 Status
+## 📈 Project Status
 
-V1 (Bronze + Incremental + Parquet + Partitioning) ✅
-V2 (Silver Layer - Data Cleaning) 🚧
+✔ Bronze layer complete
+🚧 Silver layer in progress
 
 ---
 
