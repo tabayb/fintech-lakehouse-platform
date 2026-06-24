@@ -1,13 +1,20 @@
 from pyspark.sql import SparkSession
 
 spark = (
-SparkSession.builder
-.appName("Spark Test")
-.master("local[*]")
-.getOrCreate()
+    SparkSession.builder
+    .appName("FintechLakehouse")
+    .master("local[*]")
+    .getOrCreate()
 )
 
-df = spark.range(10)
+print("Spark started successfully")
+
+data = [
+    (1, "Abay"),
+    (2, "John")
+]
+
+df = spark.createDataFrame(data, ["id", "name"])
 
 df.show()
 
